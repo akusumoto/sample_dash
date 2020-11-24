@@ -328,6 +328,90 @@ class Texture_old(object):
 
 ##########################ここからはwebアプリケーション部分######################################
 
+def create_input_card(title, subtitle_id, body):
+    card = dbc.Card(dbc.CardBody([
+        html.H5(title, className="card-title"),
+        html.H6(dbc.FormText(id=subtitle_id), className="card-subtitle"),
+        html.P(body,
+            className="card-text",
+            style={"margin-top":"5px"})
+        ]), style={"width":"100%", "margin":"2px"})
+    return card
+
+card_pole_type = create_input_card(
+    title="極点図の種類", 
+    subtitle_id="radioitems-input-status",
+    body=dbc.RadioItems(
+        options=[
+            {'label': '{100}', 'value': '1,0,0'},
+            {'label': '{110}', 'value': '1,1,0'},
+            {'label': '{111}', 'value': '1,1,1'}
+        ],
+        value='1,1,1', #初期値を設定
+        id="radioitems-input",
+    )
+)
+card_num_crystal_orientation = create_input_card(
+    title='結晶方位の数(0～5000)',
+    subtitle_id="number-of-orientation-status",
+    body=dbc.Input(
+        id='number-of-orientation',
+        type='number',
+        placeholder="input number of crystal orientation ...",
+        value='1000' #初期値を設定
+    )
+)
+card_vol_cube_texture = create_input_card(
+    title='Cube方位の体積分率(0～100)',
+    subtitle_id="volume-fraction-cube-status",
+    body=dbc.Input(
+        id='volume-fraction-cube',
+        type='number',
+        placeholder="input volume fraction of Cube texture ...",
+        value='0' #初期値を設定
+    )
+)
+card_vol_brass_texture = create_input_card(
+    title='Brass方位の体積分率(0～100)',
+    subtitle_id="volume-fraction-brass-status",
+    body=dbc.Input(
+        id='volume-fraction-brass',
+        type='number',
+        placeholder="input volume fraction of Brass texture ...",
+        value='0' #初期値を設定
+    )
+)
+card_vol_goss_texture = create_input_card(
+    title='Goss方位の体積分率(0～100)',
+    subtitle_id="volume-fraction-goss-status",
+    body=dbc.Input(
+        id='volume-fraction-goss',
+        type='number',
+        placeholder="input volume fraction of Goss texture ...",
+        value='0' #初期値を設定
+    )
+)
+card_vol_s_texture = create_input_card(
+    title='S方位の体積分率(0～100)',
+    subtitle_id="volume-fraction-s-status",
+    body=dbc.Input(
+        id='volume-fraction-s',
+        type='number',
+        placeholder="input volume fraction of S texture ...",
+        value='0' #初期値を設定
+    )
+)
+card_vol_copper_texture = create_input_card(
+    title='Copper方位の体積分率(0～100)',
+    subtitle_id="volume-fraction-copper-status",
+    body=dbc.Input(
+        id='volume-fraction-copper',
+        type='number',
+        placeholder="input volume fraction of Copper texture ...",
+        value='0' #初期値を設定
+    )
+)
+
 app.title = "Numerical Material Test on Web"
 app.layout = dbc.Container(
     [
@@ -336,75 +420,16 @@ app.layout = dbc.Container(
 
         dbc.Row(     # dbc: dash bootstrap components
         [
-            dbc.Col(html.Div(children=[
-                dbc.Label('極点図の種類'),
-                dbc.RadioItems(
-                    options=[
-                        {'label': '{100}', 'value': '1,0,0'},
-                        {'label': '{110}', 'value': '1,1,0'},
-                        {'label': '{111}', 'value': '1,1,1'}
-                    ],
-                    value='1,1,1', #初期値を設定
-                    id="radioitems-input",
-                ),
-                dbc.FormText(id="radioitems-input-status"),
-
-                dbc.Label('結晶方位の数(0～5000)', style={'textAlign': 'left'}),
-                dbc.Input(
-                    id='number-of-orientation',
-                    type='number',
-                    placeholder="input number of crystal orientation ...",
-                    value='1000' #初期値を設定
-                ),
-                dbc.FormText(id="number-of-orientation-status"),
-
-                dbc.Label('Cube方位の体積分率(0～100)'),
-                dbc.Input(
-                    id='volume-fraction-cube',
-                    type='number',
-                    placeholder="input volume fraction of Cube texture ...",
-                    value='0' #初期値を設定
-                ),
-                dbc.FormText(id="volume-fraction-cube-status"),
-
-                dbc.Label('Brass方位の体積分率(0～100)'),
-                dbc.Input(
-                    id='volume-fraction-brass',
-                    type='number',
-                    placeholder="input volume fraction of Brass texture ...",
-                    value='0' #初期値を設定
-                ),
-                dbc.FormText(id="volume-fraction-brass-status"),
-
-                dbc.Label('Goss方位の体積分率(0～100)'),
-                dbc.Input(
-                    id='volume-fraction-goss',
-                    type='number',
-                    placeholder="input volume fraction of Goss texture ...",
-                    value='0' #初期値を設定
-                ),
-                dbc.FormText(id="volume-fraction-goss-status"),
-
-                dbc.Label('S方位の体積分率(0～100)'),
-                dbc.Input(
-                    id='volume-fraction-s',
-                    type='number',
-                    placeholder="input volume fraction of S texture ...",
-                    value='0' #初期値を設定
-                ),
-                dbc.FormText(id="volume-fraction-s-status"),
-
-                dbc.Label('Copper方位の体積分率(0～100)'),
-                dbc.Input(
-                    id='volume-fraction-copper',
-                    type='number',
-                    placeholder="input volume fraction of Copper texture ...",
-                    value='0' #初期値を設定
-                ),
-                dbc.FormText(id="volume-fraction-copper-status"),
-            ],
-            style={"padding": "10px 2px 10px 2px"},
-            ),width=3),
+            dbc.Col(
+            [
+                dbc.Row(card_pole_type),
+                dbc.Row(card_num_crystal_orientation),
+                dbc.Row(card_vol_cube_texture),
+                dbc.Row(card_vol_brass_texture),
+                dbc.Row(card_vol_goss_texture),
+                dbc.Row(card_vol_s_texture),
+                dbc.Row(card_vol_copper_texture),
+            ], width=3),
             
             dbc.Col(
                 dcc.Graph(id='pole-figure'),  # dcc: dash core components
