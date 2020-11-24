@@ -24,10 +24,7 @@ import dnn2d_ss # <--------- 2020/11/18追加
 
 from dash.exceptions import PreventUpdate #エラーの場合グラフをアップデートしない
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-
-#app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.DARKLY])
 
 colors = { 'background': '#282c2f', 'text': '#7FDBFF'}
 
@@ -331,15 +328,13 @@ class Texture_old(object):
 
 ##########################ここからはwebアプリケーション部分######################################
 
-df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminderDataFiveYear.csv')
+app.title = "Numerical Material Test on Web"
+app.layout = dbc.Container(
+    [
+        dbc.Row(html.H2(className="title", children='Numerical Material Test on Web')),
+        dbc.Row(html.P(children='Yamanaka research group @ TUAT')),
 
-app.layout = html.Div(style={"padding":"10px"},
-    children=[
-
-    html.H2(className="title", children='Numerical Material Test on Web'),
-    html.P(children='Yamanaka research group @ TUAT'),
-    
-    dbc.Row(     # dbc: dash bootstrap components
+        dbc.Row(     # dbc: dash bootstrap components
         [
             dbc.Col(html.Div(children=[
                 dbc.Label('極点図の種類'),
@@ -354,7 +349,7 @@ app.layout = html.Div(style={"padding":"10px"},
                 ),
                 dbc.FormText(id="radioitems-input-status"),
 
-                dbc.Label('結晶方位の数(0～5000)',style={'textAlign': 'left'}),
+                dbc.Label('結晶方位の数(0～5000)', style={'textAlign': 'left'}),
                 dbc.Input(
                     id='number-of-orientation',
                     type='number',
@@ -411,19 +406,15 @@ app.layout = html.Div(style={"padding":"10px"},
             style={"padding": "10px 2px 10px 2px"},
             ),width=3),
             
-            dbc.Col(html.Div(children=
-                [
+            dbc.Col(
                 dcc.Graph(id='pole-figure'),  # dcc: dash core components
 #                dcc.Graph(id='stress-strain'),
-                ]
-            )),
+            ),
 
-            dbc.Col(html.Div(children= 
-                [
+            dbc.Col( 
                 dcc.Graph(id='stress-strain'),  # <------ 2020/11/18 追加: 応力-ひずみ曲線を描画
 #                dcc.Graph(id='yield-surface'),  # <------ 2020/11/19 追加: 降伏曲面を描画
-                ]
-            ))
+            )
         ]
     ),
 ])
@@ -520,12 +511,13 @@ def update_figure(radioitems_input_str,num_ori_str,vf_Cu_str,vf_Br_str,vf_Go_str
 
     fig = tex.Plotly_PoleFigure(direct=np.array(radioitems_int),component='Added')
     #fig = tex.Plotly_PoleFigure(component='Added')
-
+    
     fig.update_layout(
         plot_bgcolor=colors['background'],
         paper_bgcolor=colors['background'],
         font_color=colors['text'],
         transition_duration=500)
+
     return fig
 
 
@@ -567,12 +559,13 @@ def update_ss_curve(vf_Cu_str,vf_Br_str,vf_Go_str,vf_S_str,vf_Co_str):
     fig.update_yaxes(title_text='True stress for TD [MPa]')
     fig.add_trace(go.Scatter(x=strain[5,:,0], y=stress[5,:,0],name="RD"))    
     fig.add_trace(go.Scatter(x=strain[5,:,1], y=stress[5,:,1],name="TD"))
-
+    
     fig.update_layout(
         plot_bgcolor=colors['background'],
         paper_bgcolor=colors['background'],
         font_color=colors['text'],
-        transition_duration=500)
+       transition_duration=500)
+    
     return fig
 
 '''
