@@ -24,8 +24,6 @@ import dnn2d_ss # <--------- 2020/11/18追加
 
 from dash.exceptions import PreventUpdate #エラーの場合グラフをアップデートしない
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.DARKLY])
-
 colors = { 'background': '#282c2f', 'text': '#7FDBFF'}
 
 #####################ここから山中研究室で開発したプログラム####################################
@@ -327,18 +325,15 @@ class Texture_old(object):
 
 
 ##########################ここからはwebアプリケーション部分######################################
+def create_input_item(title, subtitle_id, body):
+    div = html.Div([
+        html.H5(title, style={"font-size":"16px"}),
+        html.H6(dbc.FormText(id=subtitle_id)),
+        html.P(body)
+    ])
+    return div
 
-def create_input_card(title, subtitle_id, body):
-    card = dbc.Card(dbc.CardBody([
-        html.H5(title, className="card-title"),
-        html.H6(dbc.FormText(id=subtitle_id), className="card-subtitle"),
-        html.P(body,
-            className="card-text",
-            style={"margin-top":"5px"})
-        ]), style={"width":"100%", "margin":"2px"})
-    return card
-
-card_pole_type = create_input_card(
+item_pole_type = create_input_item(
     title="極点図の種類", 
     subtitle_id="radioitems-input-status",
     body=dbc.RadioItems(
@@ -349,69 +344,79 @@ card_pole_type = create_input_card(
         ],
         value='1,1,1', #初期値を設定
         id="radioitems-input",
+        className="btn-group",
+        inline=True
     )
 )
-card_num_crystal_orientation = create_input_card(
+item_num_crystal_orientation = create_input_item(
     title='結晶方位の数(0～5000)',
     subtitle_id="number-of-orientation-status",
     body=dbc.Input(
         id='number-of-orientation',
         type='number',
         placeholder="input number of crystal orientation ...",
-        value='1000' #初期値を設定
+        value='1000', #初期値を設定
+        className="form-control-sm"
     )
 )
-card_vol_cube_texture = create_input_card(
+item_vol_cube_texture = create_input_item(
     title='Cube方位の体積分率(0～100)',
     subtitle_id="volume-fraction-cube-status",
     body=dbc.Input(
         id='volume-fraction-cube',
         type='number',
         placeholder="input volume fraction of Cube texture ...",
-        value='0' #初期値を設定
-    )
+        value='0', #初期値を設定
+        className="form-control-sm"    )
 )
-card_vol_brass_texture = create_input_card(
+item_vol_brass_texture = create_input_item(
     title='Brass方位の体積分率(0～100)',
     subtitle_id="volume-fraction-brass-status",
     body=dbc.Input(
         id='volume-fraction-brass',
         type='number',
         placeholder="input volume fraction of Brass texture ...",
-        value='0' #初期値を設定
+        value='0', #初期値を設定
+        className="form-control-sm"
     )
 )
-card_vol_goss_texture = create_input_card(
+item_vol_goss_texture = create_input_item(
     title='Goss方位の体積分率(0～100)',
     subtitle_id="volume-fraction-goss-status",
     body=dbc.Input(
         id='volume-fraction-goss',
         type='number',
         placeholder="input volume fraction of Goss texture ...",
-        value='0' #初期値を設定
+        value='0', #初期値を設定
+        className="form-control-sm"
     )
 )
-card_vol_s_texture = create_input_card(
+item_vol_s_texture = create_input_item(
     title='S方位の体積分率(0～100)',
     subtitle_id="volume-fraction-s-status",
     body=dbc.Input(
         id='volume-fraction-s',
         type='number',
         placeholder="input volume fraction of S texture ...",
-        value='0' #初期値を設定
+        value='0', #初期値を設定
+        className="form-control-sm"
     )
 )
-card_vol_copper_texture = create_input_card(
+item_vol_copper_texture = create_input_item(
     title='Copper方位の体積分率(0～100)',
     subtitle_id="volume-fraction-copper-status",
     body=dbc.Input(
         id='volume-fraction-copper',
         type='number',
         placeholder="input volume fraction of Copper texture ...",
-        value='0' #初期値を設定
+        value='0', #初期値を設定
+        className="form-control-sm"
     )
 )
 
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.DARKLY])
+#app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SOLAR])
+#app = dash.Dash(__name__, external_stylesheets=[dbc.themes.MATERIA])
 app.title = "Numerical Material Test on Web"
 app.layout = dbc.Container(
     [
@@ -422,23 +427,29 @@ app.layout = dbc.Container(
         [
             dbc.Col(
             [
-                dbc.Row(card_pole_type),
-                dbc.Row(card_num_crystal_orientation),
-                dbc.Row(card_vol_cube_texture),
-                dbc.Row(card_vol_brass_texture),
-                dbc.Row(card_vol_goss_texture),
-                dbc.Row(card_vol_s_texture),
-                dbc.Row(card_vol_copper_texture),
+                dbc.ListGroup([
+                    dbc.ListGroupItem(item_pole_type),
+                    dbc.ListGroupItem(item_num_crystal_orientation),
+                    dbc.ListGroupItem(item_vol_cube_texture),
+                    dbc.ListGroupItem(item_vol_brass_texture),
+                    dbc.ListGroupItem(item_vol_goss_texture),
+                    dbc.ListGroupItem(item_vol_s_texture),
+                    dbc.ListGroupItem(item_vol_copper_texture),
+                ]),
             ], width=3),
             
             dbc.Col(
-                dcc.Graph(id='pole-figure'),  # dcc: dash core components
+                html.Div(
+                    dcc.Graph(id='pole-figure'),  # dcc: dash core components
 #                dcc.Graph(id='stress-strain'),
+                )
             ),
 
-            dbc.Col( 
-                dcc.Graph(id='stress-strain'),  # <------ 2020/11/18 追加: 応力-ひずみ曲線を描画
+            dbc.Col(
+                html.Div(
+                    dcc.Graph(id='stress-strain'),  # <------ 2020/11/18 追加: 応力-ひずみ曲線を描画
 #                dcc.Graph(id='yield-surface'),  # <------ 2020/11/19 追加: 降伏曲面を描画
+                )
             )
         ]
     ),
@@ -497,7 +508,6 @@ def update_output(value):
      Input(component_id='volume-fraction-goss', component_property='value'),
      Input(component_id='volume-fraction-s', component_property='value'),
      Input(component_id='volume-fraction-copper', component_property='value')])
-
 def update_figure(radioitems_input_str,num_ori_str,vf_Cu_str,vf_Br_str,vf_Go_str,vf_S_str,vf_Co_str):
     if vf_Cu_str is None:
         raise PreventUpdate
