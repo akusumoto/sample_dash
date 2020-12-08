@@ -318,7 +318,8 @@ class Texture_old(object):
             numpy array (img_size, img_size) -- pole figure ss image data
         """
         stereo = conv.stereo(self.sample(method), direct)
-        layout = go.Layout(width=500,height=500,xaxis=dict(range=[-2,2]),yaxis=dict(range=[-2,2]))  
+        #layout = go.Layout(width=500,height=500,xaxis=dict(range=[-2,2]),yaxis=dict(range=[-2,2]))  
+        layout = go.Layout(xaxis=dict(range=[-2,2]),yaxis=dict(range=[-2,2]))  
         fig = go.Figure(data=go.Scatter(x=stereo[:,0], y=stereo[:,1], mode='markers'), layout=layout)
         return fig
 ###################################ここまで################################################
@@ -327,7 +328,7 @@ class Texture_old(object):
 ##########################ここからはwebアプリケーション部分######################################
 def create_input_item(title, subtitle_id, body):
     div = html.Div([
-        html.H5(title, style={"font-size":"16px"}),
+        html.H5(title, style={"fontSize":"16px"}),
         html.H6(dbc.FormText(id=subtitle_id)),
         html.P(body)
     ])
@@ -440,15 +441,24 @@ app.layout = dbc.Container(
             
             dbc.Col(
                 html.Div(
-                    dcc.Graph(id='pole-figure'),  # dcc: dash core components
-#                dcc.Graph(id='stress-strain'),
-                )
+                    html.Div(
+                        dcc.Graph(id='pole-figure'),  # dcc: dash core components
+    #                dcc.Graph(id='stress-strain'),
+                        style={"position":"absolute"}
+                    ),
+                    style={"width":"100%", "paddingBottom":"100%"}                    
+                ),
+                style={"width":"100%"}
             ),
 
             dbc.Col(
                 html.Div(
-                    dcc.Graph(id='stress-strain'),  # <------ 2020/11/18 追加: 応力-ひずみ曲線を描画
-#                dcc.Graph(id='yield-surface'),  # <------ 2020/11/19 追加: 降伏曲面を描画
+                    html.Div(
+                        dcc.Graph(id='stress-strain', style={"position":"absolute"}),  # <------ 2020/11/18 追加: 応力-ひずみ曲線を描画
+    #                dcc.Graph(id='yield-surface'),  # <------ 2020/11/19 追加: 降伏曲面を描画
+                        style={"width":"100%", "paddingBottom":"100%"}
+                    ),
+                    style={"width":"100%"}
                 )
             )
         ]
@@ -588,8 +598,9 @@ def update_ss_curve(vf_Cu_str,vf_Br_str,vf_Go_str,vf_S_str,vf_Co_str):
 
     strain, stress, std = dnn2d_ss.estimate_sscurve(roots, texture, 5)
 
-    layout = go.Layout(width=500,height=500)
-    fig = go.Figure(layout=layout)
+    #layout = go.Layout(width=500,height=500)
+    #fig = go.Figure(layout=layout)
+    fig = go.Figure()
     fig.update_xaxes(title_text='True stress for RD [MPa]')
     fig.update_yaxes(title_text='True stress for TD [MPa]')
     fig.add_trace(go.Scatter(x=strain[5,:,0], y=stress[5,:,0],name="RD"))    
